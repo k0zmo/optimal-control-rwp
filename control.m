@@ -31,23 +31,23 @@ i = 1;
 %stimei = zeros(1, si); % indeksy czasow przelaczen
 
 for j = 1:si
-	while stime(j) > t(i)
-		u(i) = uS;
-		i = i + 1;
-	end
+    while stime(j) > t(i)
+        u(i) = uS;
+        i = i + 1;
+    end
 
-	%stimei = [stimei i];
+    %stimei = [stimei i];
 
-	if uS == umax
-		uS = umin;
-	else
-		uS = umax;
-	end
+    if uS == umax
+        uS = umin;
+    else
+        uS = umax;
+    end
 end
 
 % przypadek nieparzystej ilosci przelaczenia
 if mod(si,2) ~= 0
-	for ii = i:length(t)
-		u(ii)  = uS;
-	end
+    for ii = i:length(t)
+        u(ii)  = uS;
+    end
 end
