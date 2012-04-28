@@ -23,10 +23,10 @@ psi(:,ti) = psiT;
 for i=ti:-1:2
     % dlugosc kroku calkowania
     h = tspan(i-1) - tspan(i);
-    if  abs(h - hbase) > 10e-6
-        disp(['rk4r: Zmieniam krok na ', num2str(h), ...
-            ' dla t=', num2str(tspan(i))]);
-    end    
+%     if  abs(h - hbase) > 10e-6
+%         disp(['rk4r: Zmieniam krok na ', num2str(h), ...
+%             ' dla t=', num2str(tspan(i))]);
+%     end    
     
     % stan systemu w tym kroku, nastepnym i w polowie
     x1  = x(:,i);

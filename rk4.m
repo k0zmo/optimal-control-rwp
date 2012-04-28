@@ -22,10 +22,10 @@ x(:,1) = x0;
 for i = 1:ti-1
     % dlugosc kroku calkowania
     h = tspan(i+1) - tspan(i);
-    if  abs(h - hbase) > 10e-6
-        disp(['rk4: Zmieniam krok na ', num2str(h), ...
-            ' dla t=', num2str(tspan(i))]);
-    end
+%     if  abs(h - hbase) > 10e-6
+%         disp(['rk4: Zmieniam krok na ', num2str(h), ...
+%             ' dla t=', num2str(tspan(i))]);
+%     end
     
     % sterowanie w tym kroku, nastepnym i w polowie
     u1 = u(i);
