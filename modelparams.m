@@ -16,7 +16,7 @@ R = eye(4,4);
 R(1,1)=1;
 R(2,2)=1;
 R(3,3)=0;
-R(4,4)=0.05;
+R(4,4)=1;
 
 %% parametry symulacji
 
@@ -25,7 +25,7 @@ t0 = 0;
 % krok calkowania
 h = 0.01;
 % horyzont czasowy
-Tk = 4;
+Tk = 8;
 % os czasu
 t = t0:h:Tk;
 % ilosc krokow

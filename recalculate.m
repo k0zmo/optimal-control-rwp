@@ -20,6 +20,9 @@ xT = x(:,length(x));
 % wartosc wskaznika jakosci
 Q = costfun(xT);
 
+% plot(t,x(1,:), t,x(2,:),t,u);
+% grid on
+
 if nargout >= 2 
     %% calkowanie rownan sprzezonych w tyl
     psiTk = R*(xf - xT); % warunek koncowy na Psi
@@ -32,6 +35,7 @@ if nargout >= 2
 
     %% Pochodna wskaznika jakosci wzgledem czasow przelaczen
     dQ = costfuncderivatives(stimei, u, psi);
+    dQ = dQ';
 end
 
 if nargout >= 3, x_ = x; end,
