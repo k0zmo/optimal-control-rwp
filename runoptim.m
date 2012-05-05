@@ -3,72 +3,86 @@ run modelparams;
 
 maxit = 100;
 e0 = 1e-4; 
-x0 = [0.1618 2.1214 3.5000 3.9600]; x0=x0';
+x0 = [0.3 2.3]; x0=x0';
+
 u0 = umin;
-n = length(x0); % wymiar przestrzeni
+stime = x0;
+
 czod = 2*length(x0); % czestosc odnowy
-wskaz = 1;
+rr = 1;
+skip2 = 0;
+reducted = 0;
 
 for i=1:maxit
-    fprintf('\nx0=%.5f %.5f %.5f %.5f ', x0(:));
     
-    % gradient w x0
-    [q, g] = recalculate(x0,u0);
-    
-    fprintf('q=%.16f ', q);    
-    
-    % norma gradientu
-    n2 = g'*g;
-    % warunek stopu
-    if n2 < e0, break, end
-    % warunek odnowy
-    if rem(i,czod) == 1 || wskaz == 1
-        v = eye(n);
+    if skip2 ~= 1
+        % gradient w x0
+        [Q, grad] = recalculate(stime, u0);
+
+        fprintf('\nQ=%.16f ', Q);
+        fprintf('stime=');
+        for i=1:length(stime), fprintf('%.5f ', stime(i)); end;         
+
+        % norma gradientu
+        n2 = grad'*grad;
+        % sprawdz warunek stopu
+        if n2 < e0, disp('|grad|<=eps'); break, end
     else
-        % roznica miedzy gradientami z kroku obecnego i poprzedniego
-        r = g - gs;
-        s = x0 - xs;
+        skip2 = 0;
+    end
+    
+    if rr == 1 || reducted == 1 % || rem(1, czod) == 1
+        v = eye(length(stime));
+        reducted = 0;
+    else
+        r = grad - grad_s;
+        s = stime - stime_s;
         
         sr = s' * r;
         vr = v * r;
         vrs = vr * s';
         % z formuly Shermana-Morrisona v=inv(W), Wd=-gradient(x0)
-        v = v+  (1 + r'*vr)/sr * (s*s')/sr - (vrs+vrs')/sr;
+        v = v + (1 + r'*vr)/sr * (s*s')/sr - (vrs+vrs')/sr;        
     end
     
-    d = -v * g;
-    if d' * g < 0
-        gs = g;
-        xs = x0;
+    % kierunek poszukiwania
+    d = -v * grad;
+    
+    if d'*grad >= 0
+        rr = 1;
+    else
+        stime_s = stime;
+        grad_s = grad;
         
-        % szacuj maksymalny krok
-        stimei = [0 x0' Tk];
-        d = [0 d' 0];
-        dStimei = diff(stimei);
-        dD = -diff(d);
-        woz = find(dD > 0);
-        kns = dStimei(woz) ./ dD(woz);
-        maxstep = min([inf kns]);
+        % szacuj maksymalny krok dla poszukiwania na kierunku
+        st = maxstep(stime, d);
         
         % szukaj minimum na wyznaczonym kierunku
-        %[x0, wskaz] = linesearch1(x0, d, q, maxstep);
-        [x0,f0] = linesearch1(x0, u0, d(2:length(d)-1)', q, maxstep);
-        %fprintf('abs(f0-q)=%.16f\n', abs(f0-q));
-       
-        if f0 < q && abs(f0-q) > 10e-6
-            wskaz = 0;
-        elseif wskaz == 1
-            disp('Koniec');
-            break;
-        end;
-    else
-        % odnowa
-        wskaz = 1;
+        [stime, Q_opt] = linesearch1(stime, u0, d, Q, st);
+        fprintf('new_Q=%.16f ', Q_opt);
+        
+        [reducted, stime, u0] = reduction(stime, u0);
+        if reducted == 1
+            fprintf('\n--Redukcja--');
+            grad_s = grad;
+            stime_s = stime;            
+        else
+            % jesli nastapila poprawa
+            if Q_opt < Q 
+                rr = 0;
+            elseif rr == 1
+                fprintf('\n--Koniec--');
+                break;
+            elseif rr == 0
+                skip2 = 1;
+                rr = 1;
+            end
+        end
     end
 end 
 
 %%
-[~,~,x,t,u,psi]=recalculate(x0,u0);
+[~,~,x,t,u,psi]=recalculate(stime,u0);
 
 figure(1)
 plot(t,x(1,:), t,x(2,:),t,u);

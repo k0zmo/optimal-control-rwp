@@ -17,10 +17,10 @@ R = eye(4,4);
 R(1,1)=1;
 R(2,2)=1;
 R(3,3)=0;
-R(4,4)=1;
+R(4,4)=0.001;
 
 %% parametry symulacji
-global Tk h ti
+global t Tk h ti
 
 % czas poczatkowy
 t0 = 0;

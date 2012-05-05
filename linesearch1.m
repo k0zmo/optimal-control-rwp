@@ -8,8 +8,8 @@ if smax < inf
 	end
 end
 
-f = zeros(1, 20);
-s = zeros(1, 20);
+%f = zeros(1, 20);
+%s = zeros(1, 20);
 
 s(1) = 0;
 f(1) = f0;

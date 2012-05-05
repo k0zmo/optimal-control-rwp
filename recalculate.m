@@ -1,5 +1,6 @@
 function [Q,dQ,x_,t_,u_,psi_] = recalculate(stime,u0,d,s)
 modelparams;
+global t
 
 % stime = stime + d*s
 if nargin == 3, stime = stime + d;
