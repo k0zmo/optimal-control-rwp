@@ -7,6 +7,7 @@ J = 0.004572;
 Jr = 0.00002495;
 k = 0.0274;
 
+global umax umin
 umax = 3;
 umin = -umax;
 
@@ -19,13 +20,14 @@ R(3,3)=0;
 R(4,4)=1;
 
 %% parametry symulacji
+global Tk h ti
 
 % czas poczatkowy
 t0 = 0;
 % krok calkowania
 h = 0.01;
 % horyzont czasowy
-Tk = 8;
+Tk = 4;
 % os czasu
 t = t0:h:Tk;
 % ilosc krokow

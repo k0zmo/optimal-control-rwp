@@ -1,11 +1,11 @@
 clc, clear;
 
-modelparams;
+run modelparams;
 
 %% sterowanie
 u0 = umin; % wartosc poczatkowa sterowania (w chwili t0)
 %stime = [0.3 0.56 0.9 1.567 2.023 2.68 3.14 3.54 3.889]; % czasy przelaczen (w sekundach)
-stime = [1.6687 3.6687];
+stime = Tk/2;
 % czasy przelaczen (w sekundach)
 %stime = Tk/2;
 si = length(stime);
@@ -41,6 +41,6 @@ figId = figId + 1;
 
  switching = switching_fun(psi);
  figure(figId);
- plot(t, u, 'r', t, switching, '-b');
+ plot(t, switching, '-b');
  title('Sterownanie i funkcja prze³¹czaj¹ca');
  grid on

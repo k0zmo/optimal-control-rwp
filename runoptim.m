@@ -3,23 +3,19 @@ run modelparams;
 
 maxit = 100;
 e0 = 1e-4; 
-%x0 = [0.5;1.0;1.5;2.0;2.5;3.0;3.5]; % czasy przelaczen poczatkowe
-x0 = 1:1:Tk; x0=x0';
+x0 = [0.1618 2.1214 3.5000 3.9600]; x0=x0';
+u0 = umin;
 n = length(x0); % wymiar przestrzeni
 czod = 2*length(x0); % czestosc odnowy
 wskaz = 1;
 
-format long
-
 for i=1:maxit
-    % gradient w x0
-    [q, g] = recalculate(x0);
+    fprintf('\nx0=%.5f %.5f %.5f %.5f', x0(:));
     
-    disp(strcat('q=',num2str(q)));
-    %disp('grad=');
-    %disp(g');
-    %disp('stime=');
-    %disp(x0');
+    % gradient w x0
+    [q, g] = recalculate(x0,u0);
+    
+    fprintf('q=%.16f ', q);    
     
     % norma gradientu
     n2 = g'*g;
@@ -56,8 +52,10 @@ for i=1:maxit
         
         % szukaj minimum na wyznaczonym kierunku
         %[x0, wskaz] = linesearch1(x0, d, q, maxstep);
-        [x0,f0] = linesearch1(x0, d(2:length(d)-1)', q, maxstep);
-        if f0 < q
+        [x0,f0] = linesearch1(x0, u0, d(2:length(d)-1)', q, maxstep);
+        fprintf('abs(f0-q)=%.16f\n', abs(f0-q));
+       
+        if f0 < q && abs(f0-q) > 10e-6
             wskaz = 0;
         elseif wskaz == 1
             disp('Koniec');
@@ -69,15 +67,18 @@ for i=1:maxit
     end
 end 
 
-format short
-
 %%
-[~,~,x,t,u,psi]=recalculate(x0);
+[~,~,x,t,u,psi]=recalculate(x0,u0);
+
 figure(1)
 plot(t,x(1,:), t,x(2,:),t,u);
 grid on
 
 figure(2)
+plot(t,x(3,:), t,x(4,:));
+grid on
+
+figure(3)
 title('funkcja przelaczajaca')
 sw=switching_fun(psi);
 grid on

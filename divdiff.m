@@ -1,6 +1,6 @@
 clc, clear;
 
-modelparams;
+run modelparams;
 
 %% sterowanie bazowe
 u0 = umin;

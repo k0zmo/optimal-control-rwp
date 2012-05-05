@@ -40,11 +40,8 @@ for j = 1:si
 
     stimei(j) = i;
 
-    if uS == umax
-        uS = umin;
-    else
-        uS = umax;
-    end
+    % zamien sterowanie 
+    if uS == umax, uS = umin; else uS = umax; end
 end
 
 % przypadek nieparzystej ilosci przelaczenia

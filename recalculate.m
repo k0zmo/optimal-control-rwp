@@ -1,14 +1,24 @@
-function [Q,dQ,x_,t_,u_,psi_] = recalculate(stime,d,s)
+function [Q,dQ,x_,t_,u_,psi_] = recalculate(stime,u0,d,s)
 modelparams;
 
 % stime = stime + d*s
-if nargin == 2, stime = stime + d;
-elseif nargin == 3, stime = stime + d*s;
+if nargin == 3, stime = stime + d;
+elseif nargin == 4, stime = stime + d*s;
 end
 
-%% generuj sterowanie dla podanych czasow przelaczen, sterowania poczatkowego oraz osi czasu
-u0 = umin;
+% %% Przypadek zejscia czasu przelaczen do momentu t0 lub Tk
+% if stime(1) == 0
+%     stime = stime(2:length(stime));
+%     if u0 == umax, u0 = umin; else u0 = umin; end
+% end
+% if(stime(length(stime)) == Tk)
+%    stime = stime(1:length(stime)-1); 
+% end
+
+%% generuj sterowanie dla podanych czasow przelaczen, sterowania 
+%  poczatkowego oraz osi czasu
 [u, t, stimei] = control(stime, [u0 umax umin], t);
+
 % u - wygenerowane sterowanie
 % t - skorygowany czas o chwile przelaczen
 % stimei - indeks czasu przelaczen w wektorze czasu t
