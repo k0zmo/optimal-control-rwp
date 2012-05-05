@@ -10,7 +10,7 @@ czod = 2*length(x0); % czestosc odnowy
 wskaz = 1;
 
 for i=1:maxit
-    fprintf('\nx0=%.5f %.5f %.5f %.5f', x0(:));
+    fprintf('\nx0=%.5f %.5f %.5f %.5f ', x0(:));
     
     % gradient w x0
     [q, g] = recalculate(x0,u0);
@@ -53,7 +53,7 @@ for i=1:maxit
         % szukaj minimum na wyznaczonym kierunku
         %[x0, wskaz] = linesearch1(x0, d, q, maxstep);
         [x0,f0] = linesearch1(x0, u0, d(2:length(d)-1)', q, maxstep);
-        fprintf('abs(f0-q)=%.16f\n', abs(f0-q));
+        %fprintf('abs(f0-q)=%.16f\n', abs(f0-q));
        
         if f0 < q && abs(f0-q) > 10e-6
             wskaz = 0;
