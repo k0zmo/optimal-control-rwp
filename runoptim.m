@@ -3,7 +3,8 @@ run modelparams;
 
 maxit = 100;
 e0 = 1e-4; 
-x0 = [0.3 2.3]; x0=x0';
+%x0 = [1.78 1.79 2.002285256623649]; x0=x0';
+x0 = [0.91 2.91]; x0=x0';
 
 u0 = umin;
 stime = x0;
@@ -12,6 +13,7 @@ czod = 2*length(x0); % czestosc odnowy
 rr = 1;
 skip2 = 0;
 reducted = 0;
+fprintf('--Poczatek--');
 
 for i=1:maxit
     
@@ -20,8 +22,7 @@ for i=1:maxit
         [Q, grad] = recalculate(stime, u0);
 
         fprintf('\nQ=%.16f ', Q);
-        fprintf('stime=');
-        for i=1:length(stime), fprintf('%.5f ', stime(i)); end;         
+        prettyprint('stime', stime);
 
         % norma gradientu
         n2 = grad'*grad;
@@ -42,7 +43,7 @@ for i=1:maxit
         vr = v * r;
         vrs = vr * s';
         % z formuly Shermana-Morrisona v=inv(W), Wd=-gradient(x0)
-        v = v + (1 + r'*vr)/sr * (s*s')/sr - (vrs+vrs')/sr;        
+        v = v + (1 + r'*vr)/sr * (s*s')/sr - (vrs+vrs')/sr;
     end
     
     % kierunek poszukiwania
@@ -63,15 +64,14 @@ for i=1:maxit
         
         [reducted, stime, u0] = reduction(stime, u0);
         if reducted == 1
-            fprintf('\n--Redukcja--');
-            grad_s = grad;
-            stime_s = stime;            
+            %grad_s = grad;
+            %stime_s = stime;            
         else
             % jesli nastapila poprawa
-            if Q_opt < Q 
+            if Q_opt < Q && abs(Q_opt - Q) > 10e-6
                 rr = 0;
             elseif rr == 1
-                fprintf('\n--Koniec--');
+                fprintf('\n--Koniec--\n');
                 break;
             elseif rr == 0
                 skip2 = 1;
@@ -85,15 +85,20 @@ end
 [~,~,x,t,u,psi]=recalculate(stime,u0);
 
 figure(1)
-plot(t,x(1,:), t,x(2,:),t,u);
+title('przebieg stanow x1 i x2')
+plot(t,x(1,:), t,x(2,:));
 grid on
 
 figure(2)
+title('przebieg stanow x3 i x4')
 plot(t,x(3,:), t,x(4,:));
 grid on
 
 figure(3)
-title('funkcja przelaczajaca')
+title('funkcja przelaczajaca i sterowanie')
 sw=switching_fun(psi);
+swmax = max(abs(max(sw)),abs(min(sw)));
+uumax = max(abs(umax),abs(umin));
+plot(t,sw/swmax, t, u/uumax, 'r', [0 t(end)], [0 0], '--k');
 grid on
-plot(t,sw);
+axis([0 Tk -1.5 1.5])

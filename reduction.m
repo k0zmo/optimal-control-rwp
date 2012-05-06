@@ -3,6 +3,8 @@ function[reducted,stime, u0] = reduction(stime, u0)
 % niz 2 czasy przelaczen
 global umax umin h Tk
 
+stime_old=stime;
+
 if stime(end) == Tk
     stime = stime(1:end-1);
     reducted = 1;
@@ -19,7 +21,6 @@ dstime_p = diff(stime_p);
 dd = find(dstime_p <= h);
 % czy zaszla zmiana
 reducted = reducted || ~isempty(dd);
-
 if ~isempty(dd)
     if dd(1) == 1
         % zmiana poczatkowego sterowania
@@ -46,3 +47,10 @@ if ~isempty(dd)
 end
 
 stime = stime';
+
+if reducted ~= 0
+    fprintf('\n * Redukcja: ');
+   
+    prettyprint('stime_old', stime_old);
+    prettyprint('stime', stime);
+end;

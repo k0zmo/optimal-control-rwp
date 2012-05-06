@@ -28,7 +28,7 @@ psi = rk4r('comodel', x, t, psiTk);
 dQ = costfuncderivatives(stimei, u, psi);
 
 % odchylki czasow przelaczen
-hh = 0:0.01:0.2;
+hh = 0:h:20*h;
 % wektor wskaznikow jakosci dla podanych odchylek
 Qq = zeros(1,length(hh));
 disp(strcat('Q=',num2str(Q)));
@@ -75,7 +75,7 @@ for ii = 2:length(hh)
     %% wartosc wskaznika jakosci
     Qq(ii) = (Q_ - Qq(1))/delta_u;
 end
-
+%%
 figure(1)
 hold off
 figure(2)
@@ -86,6 +86,7 @@ hold on;
 plot(hh(2:length(hh)),Qq(2:length(Qq)),'or');
 plot([hh(1) hh(length(hh))],[dQ dQ],'g');
 grid;
-legend('pochodna szacowana','pochodna dok³adna');
-xlabel('delta u');
+legend('iloraz ró¿nicowy','pochodna dok³adna');
+title('Weryfikacja pochodnej');
+xlabel('\epsilon');
 hold off
