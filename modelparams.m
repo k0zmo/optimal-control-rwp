@@ -14,25 +14,26 @@ umin = -umax;
 %% parametry wskaznika jakosci
 global R
 R = eye(4,4);
-R(1,1)=1;
+R(1,1)=5;
 R(2,2)=1;
 R(3,3)=0;
-R(4,4)=0.001;
+R(4,4)=0.1;
 
 %% parametry symulacji
-global t Tk h ti
+global Tk h ti
 
 % czas poczatkowy
 t0 = 0;
 % krok calkowania
 h = 0.01;
 % horyzont czasowy
-Tk = 4;
+Tk = 6;
 % os czasu
 t = t0:h:Tk;
 % ilosc krokow
 ti = length(t);
 
+global x0
 % warunek poczatkowy
 x0 = [-pi; % kat wahadla (kat 0 to 'gora', kierunek zgodnie ze wsk. zegara)
       0; % predkosc wahadla

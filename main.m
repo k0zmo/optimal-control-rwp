@@ -1,46 +1,55 @@
-clc, clear;
+clc, clear all, close all, format long e, format compact
 
 run modelparams;
+tau = [];
+u0 = umax;
+while 1
+    [tau,u0,x,t,u,psi] = bfgs(tau,u0,t);
+    H1 = switching_fun(psi);
 
-%% sterowanie
-u0 = umin; % wartosc poczatkowa sterowania (w chwili t0)
-%stime = [0.3 0.56 0.9 1.567 2.023 2.68 3.14 3.54 3.889]; % czasy przelaczen (w sekundach)
-stime = Tk/2;
-% czasy przelaczen (w sekundach)
-%stime = Tk/2;
-si = length(stime);
-disp(strcat('ilosc przelaczen=',num2str(si)));
+    figure(1), plot(t,x(1,:), t,x(2,:));
+    title('przebieg stanow x1 i x2'), grid on
 
-%% generuj sterowanie dla podanych czasow przelaczen, sterowania poczatkowego oraz osi czasu
-[u, t, stimei] = control(stime, [u0 umax umin], t);
+    figure(2), plot(t, H1/max(abs(H1)));
+    title('funkcja przelaczajaca i sterowanie'), grid on
+    axis([0 Tk -1.2 1.2])
+    hold on
 
-%% calkowanie rk4 w przod
-x = rk4('model', u, t, x0);
-% stan koncowy
-xT = x(:,length(x));
-Q = costfun(xT);
+    % Dla prostszego plotowania
+    tau_ = [0 tau Tk];
+    u0_ = u0 / abs(umax);
 
-%% calkowanie rownan sprzezonych w tyl
-psiTk = R*(xf - xT); % warunek koncowy na Psi
-psi = rk4r('comodel', x, t, psiTk);
+    % Linie przelaczen
+    for j=1:length(tau)
+        plot([tau(j) tau(j)],[-1 1],'r:')
+    end
+    % Wartosc sterowania na okreslonych przedzialach
+    for j=1:2:length(tau_)-1
+        plot([tau_(j) tau_(j+1)],[u0_ u0_],'r','LineWidth',2)
+        if j<length(tau_)-1
+            plot([tau_(j+1) tau_(j+2)],-[u0_ u0_],'r','LineWidth',2)
+        end
+    end
 
-figId = 1;
-figure(figId)
-plot(t,x(1,:), t,x(2,:), t, u);
-legend('k¹t wahad³a','prêdkoœæ wahad³a', 'sterowanie');
-title('Trajektorie systemu dla przyk³adowego sterowania');
-grid on
-figId = figId + 1;
+    % Liczenie wariacji szpilkowej
+    [Emin imin] = min(u.*H1);
 
-figure(figId)
-plot(t,x(3,:), t, x(4,:));
-legend('k¹t wa³u napêdowego', 'prêdkoœæ wa³u napêdowego');
-title('Trajektorie systemu dla przyk³adowego sterowania');
-grid on
-figId = figId + 1;
-
- switching = switching_fun(psi);
- figure(figId);
- plot(t, switching, '-b');
- title('Sterownanie i funkcja prze³¹czaj¹ca');
- grid on
+    if Emin>-1e-6
+        disp('Cost derivative below 1e-6')
+        break
+    else
+        if imin==1
+            % tau = [0 tau];
+            u0 = -u0;
+        elseif imin == length(t)
+            tau = [tau tau(end)];
+        else
+            t = sort([t t(imin)+h*0.5]);
+            tau = sort([t(imin) t(imin+1) tau]);
+        end
+    end
+    plot([t(imin) t(imin)],[-1 1],'k','LineWidth',3)
+    hold off
+    pause(1)
+    %keyboard
+end

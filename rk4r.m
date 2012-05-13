@@ -1,4 +1,4 @@
-function [psi] = rk4r(odefun, x, tspan, psiT)
+function psi = rk4r(odefun, x, tspan, psiT)
 % odefun - nazwa funkcji prawej strony rownania x'(t) = f(x(t),u(t))
 % x      - stan
 % tspan  - os czasu
@@ -18,15 +18,11 @@ ti = length(tspan);
 psi = zeros(length(psiT), ti);
 
 % warunek koncowy
-psi(:,ti) = psiT;
+psi(:,end) = psiT;
 
 for i=ti:-1:2
     % dlugosc kroku calkowania
     h = tspan(i-1) - tspan(i);
-%     if  abs(h - hbase) > 10e-6
-%         disp(['rk4r: Zmieniam krok na ', num2str(h), ...
-%             ' dla t=', num2str(tspan(i))]);
-%     end    
     
     % stan systemu w tym kroku, nastepnym i w polowie
     x1  = x(:,i);
