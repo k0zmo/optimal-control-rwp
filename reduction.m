@@ -12,5 +12,3 @@ if ~isempty(j)
     u0 = u(1);
     rc = 1;
 end
-
-tau = tau(2:end-1);

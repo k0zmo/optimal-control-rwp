@@ -1,31 +1,12 @@
-clc, clear;
+clc, clear all, close all, format long e, format compact
 
 run modelparams;
+tau = [0 2 4];
+u0 = umax;
 
-%% sterowanie bazowe
-u0 = umin;
-tau = Tk/2;
-si = length(tau);
+[dQ,Q,x,t,psi,H1] = gradient(tau, u0);
 
-%% generuj sterowanie dla podanych czasow przelaczen, sterowania poczatkowego oraz osi czasu
-[u, t, taui] = control(tau, [u0 umax umin], t);
-% u - wygenerowane sterowanie
-% t - skorygowany czas o chwile przelaczen
-% taui - indeks czasu przelaczen w wektorze czasu t
-
-%% calkowanie rk4 w przod
-x = rk4('model', u, t, x0);
-% stan koncowy
-xT = x(:,end);
-% wartosc wskaznika jakosci
-Q = costfun(xT);
-
-%% calkowanie rownan sprzezonych w tyl
-psiTk = R*(xf - xT); % warunek koncowy na Psi
-psi = rk4r('comodel', x, t, psiTk);
-
-%% Pochodna wskaznika jakosci wzgledem czasow przelaczen
-dQ = costfuncderivatives(taui, u, psi);
+plot(t, H1);
 
 % odchylki czasow przelaczen
 hh = 0:h:20*h;
@@ -38,18 +19,9 @@ for ii = 2:length(hh)
     eps = hh(ii);
 
     %% sterowanie
-    u0 = umin;
-    tau = Tk/2 + eps;
+    tau = tau(end)/2 + eps;
 
-    %% generuj sterowanie dla podanych czasow przelaczen, sterowania poczatkowego oraz osi czasu
-    [u, t, taui] = control(tau, [u0 umax umin], t);
-
-    %% calkowanie rk4 w przod
-    x = rk4('model', u, t, x0);
-    % stan koncowy
-    xT = x(:, end);
-
-    Q = costfun(xT);
+    Q = cost(tau, u0);
     disp(strcat('Obliczenia dla eps=',num2str(eps, '%01.4f'), ...
         ' Q=',num2str(Q)));
 

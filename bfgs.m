@@ -1,5 +1,4 @@
-function[tau,u0,x,t,u,psi] = bfgs(tau,u0,t)
-global Tk
+function[tau,u0,x,t,psi,H1] = bfgs(tau,u0)
 % rc=1 - wyliczyæ gradient, d=-dQ
 %    2 -    "        "    , d ze wzoru rek.
 %    0 - nie wyliczaæ grad.,d=-dQ
@@ -9,7 +8,7 @@ rc = 1;
 
 for ii = 1:maxit+1
     if rc
-        [dQ, Q, x, t, u, psi] = gradient(tau, u0, t);
+        [dQ, Q, x, t, psi, H1] = gradient(tau, u0);
         norm_dQ = norm(dQ);
         disp([Q norm_dQ])
         if norm_dQ < 1e-6, disp('normal stop'), break,end
@@ -17,11 +16,11 @@ for ii = 1:maxit+1
     end
     
     if rc<2
-        V = eye(length(tau));
+        V = eye(length(tau)-2);
         d = -dQ;
     else
         R = dQ - dQ_o; 
-        S = (tau - tau_o)';
+        S = (tau(2:end-1) - tau_o(2:end-1))';
         VS = V*S;
         V = V + R*R'/(R'*S) - VS*VS'/(S'*VS);
         d = -V\dQ;
@@ -34,7 +33,7 @@ for ii = 1:maxit+1
         tau = linesearch(tau, u0, Q, d, t);
         if max(abs(tau - tau_o))
             rc = 2;
-            [tau, u0, rc] = reduction([0 tau Tk], u0, rc);
+            [tau, u0, rc] = reduction(tau, u0, rc);
         else
             if rc < 2
                 disp('no improvement'),break

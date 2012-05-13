@@ -1,4 +1,4 @@
-function [psinext] = comodel(psi, x)
+function psinext = comodel(psi, x)
 global m g l J
 psinext = [-psi(2) * m*g*l/J*cos(x(1)); 
            -psi(1); 

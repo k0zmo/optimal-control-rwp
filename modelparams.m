@@ -7,9 +7,8 @@ J = 0.004572;
 Jr = 0.00002495;
 k = 0.0274;
 
-global umax umin
+global umax
 umax = 3;
-umin = -umax;
 
 %% parametry wskaznika jakosci
 global R
@@ -20,20 +19,14 @@ R(3,3)=0;
 R(4,4)=0.1;
 
 %% parametry symulacji
-global Tk h ti
+global h
 
 % czas poczatkowy
 t0 = 0;
 % krok calkowania
 h = 0.01;
-% horyzont czasowy
-Tk = 6;
-% os czasu
-t = t0:h:Tk;
-% ilosc krokow
-ti = length(t);
 
-global x0
+global x0 xf
 % warunek poczatkowy
 x0 = [-pi; % kat wahadla (kat 0 to 'gora', kierunek zgodnie ze wsk. zegara)
       0; % predkosc wahadla
@@ -41,5 +34,4 @@ x0 = [-pi; % kat wahadla (kat 0 to 'gora', kierunek zgodnie ze wsk. zegara)
       0]; % predkosc walu napedowego
 
 % warunek koncowy
-global xf
 xf = [0; 0; 0; 0];

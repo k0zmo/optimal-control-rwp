@@ -1,25 +1,62 @@
-function [dQ,Q,x,t,u,psi] = gradient(tau,u0,t)
-global umax umin x0
+function [dQ,Q,x,t,psi,H1] = gradient(tau,u0)
+global h x0
 
-%% generuj sterowanie dla podanych czasow przelaczen, sterowania 
-%  poczatkowego oraz osi czasu
-[u, t, taui] = control(tau, [u0 umax umin], t);
+dtau = diff(tau);
+n = ceil(dtau/h);
+nc = cumsum([1 n]);
 
-% u - wygenerowane sterowanie
-% t - skorygowany czas o chwile przelaczen
-% taui - indeks czasu przelaczen w wektorze czasu t
+x = zeros(length(x0), nc(end));
+x(:,1) = x0;
+u = u0;
+t = zeros(1, nc(end));
 
-%% calkowanie rk4 w przod
-x = rk4('model', u, t, x0);
-% stan koncowy
+for j = 1:length(dtau)
+    if n(j)
+        h = dtau(j)/n(j);
+        h2 = h/2;
+        h3 = h/3;
+        h6 = h/6;
+        for i = nc(j):nc(j+1)-1
+            dx1 = feval('model', x(:,i), u);
+            dx2 = dx1 + feval('model', h2*dx1, 0);
+            dx3 = dx1 + feval('model', h2*dx2, 0);
+            dx4 = dx1 + feval('model', h*dx3, 0);
+            x(:,i+1) = x(:,i) + h3*(dx2+dx3) + h6*(dx1+dx4);
+            t(i+1) = t(i) + h;
+        end
+    end
+    u=-u;
+end
+
 xT = x(:,end);
-% wartosc wskaznika jakosci
 Q = costfun(xT);
 
-%% calkowanie rownan sprzezonych w tyl
-psiTk = psi_last(xT); % warunek koncowy na Psi
-psi = rk4r('comodel', x, t, psiTk);
+psi = zeros(size(x));
+psi(:,end) = psi_last(xT);
+u=-u;
 
-%% Pochodna wskaznika jakosci wzgledem czasow przelaczen
-dQ = costfuncderivatives(taui, u, psi);
-dQ = dQ';
+for j=length(dtau):-1:1
+    if n(j)
+        h = dtau(j) / n(j);
+        h2 = h/2;
+        h3 = h/3;
+        h6 = h/6;
+        for i = nc(j+1):-1:nc(j)+1
+            dx1 = feval('comodel', psi(:,i), x(:,i));
+            dx2 = dx1 + feval('comodel', h2*dx1, 0);
+            dx3 = dx1 + feval('comodel', h2*dx2, 0);
+            dx4 = dx1 + feval('comodel', h*dx3, 0);
+            psi(:,i-1) = psi(:,i) - h3*(dx2+dx3) - h6*(dx1+dx4);
+        end
+    end
+    u=-u;
+end
+H1 = switching_fun(psi);
+
+if length(tau)<=2
+    dQ = [];
+else
+    dQ = 2*u0 * H1(nc(2:end-1));
+    dQ(1:2:end) = -dQ(1:2:end);
+end
+
