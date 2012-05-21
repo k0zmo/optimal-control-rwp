@@ -42,5 +42,5 @@ tau = [0                 ...
 	   5];
 
 [dQ, Q, x, t, psi, H1] = gradient(tau, u0, x0, h0, xf);
-
 plotcharts(t, x, H1, tau, u0);
+[Q, dQ]

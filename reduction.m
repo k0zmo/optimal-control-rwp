@@ -1,4 +1,4 @@
-function [tau, u0, rc]=reduction(tau, u0, rc)
+function [tau, u0, R]=reduction(tau, u0, R)
 j = find(diff(tau) <= 1e-10);
 
 if ~isempty(j)
@@ -10,5 +10,5 @@ if ~isempty(j)
     u(r) = [];
     tau(r+1) = [];
     u0 = u(1);
-    rc = 1;
+    R = 1;
 end

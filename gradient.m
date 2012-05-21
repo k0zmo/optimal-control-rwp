@@ -6,11 +6,8 @@ psi = rk4r(tau, x, h0, xf);
 % Przebieg funkcji przelaczajacej
 H1 = switching_fun(psi);
 
-dTau = diff(tau);
-n = ceil(dTau/h0);
-nc = cumsum([1 n]);
-
 % Pochodna wskaznika jakosci wzgledem czasow przelaczen
-dQ = 2*u0*H1(nc(2:end-1));
+ur = uranges(tau, h0);
+dQ = 2*u0 * H1(ur(2:end-1));
 % Co druga pochodna ma przeciwny znak
 dQ(1:2:end) = -dQ(1:2:end);

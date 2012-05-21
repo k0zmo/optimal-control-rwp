@@ -1,8 +1,7 @@
 function [Q, t, x, u] = rk4(tau, u0, x0, h0, xf)
+[ur, un] = uranges(tau, h0);
 dTau = diff(tau);
-n = ceil(dTau/h0);
-nc = cumsum([1 n]);
-xlength = nc(end);
+xlength = ur(end);
 
 x = zeros(xlength, length(x0));
 x(1,:) = x0;
@@ -13,9 +12,9 @@ u(1) = u0;
 cu = u(1);
 
 for j = 1:length(tau)-1
-    if n(j)
-        h = dTau(j)/n(j);
-        for i = nc(j):nc(j+1) - 1
+    if un(j) > 0
+        h = dTau(j)/un(j);
+        for i = ur(j):ur(j+1) - 1
             % wspolczynniki RK
 			z = x(i,:);
             k1 = h * feval('model', z         , cu);
