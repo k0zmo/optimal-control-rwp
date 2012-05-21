@@ -1,8 +1,8 @@
-function [tau, u0, rc] = reduction(tau,u0,rc)
+function [tau, u0, rc]=reduction(tau, u0, rc)
 j = find(diff(tau) <= 1e-10);
+
 if ~isempty(j)
-    m = length(tau);
-    u = u0*ones(m-1,1);
+    u = u0*ones(length(tau)-1,1);
     u(2:2:end) = -u0;
     u(j) = [];
     tau(j) = [];
