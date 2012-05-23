@@ -1,17 +1,18 @@
 function [xopt] = linesearch(tau0, sd, f0, u0, x0, h0, xf)
-
+global Tk
+tau = [0 tau0 Tk];
 % Obliczenie maksymalnego, dopuszczalnego kroku
-sd=[0, sd', 0];
-dd = diff(sd);
-dtau = diff(tau0);
+sd1=[0, sd', 0];
+dd = diff(sd1);
+dtau = diff(tau);
 jj = find(dd<0);
 smax = min([inf,-dtau(jj)./dd(jj)]);
 
 % Sprawdzenie wsk. jakosci dla maksymalnego, dopuszczalnego kroku
 if smax < inf
-    Q = rk4(tau0 + smax*sd, u0, x0, h0, xf);
+    Q = rk4(tau0 + smax*sd', u0, x0, h0, xf);
     if Q < f0
-        xopt = tau0 + smax*sd;
+        xopt = tau0 + smax*sd';
         return
     end
 end
@@ -22,7 +23,7 @@ s(2) = min([1, smax]);
 
 % Proste, iteracyjne poszukiwanie na kierunku (kontrakcja)
 for i = 2:20
-    f(i) = rk4(tau0 + s(i)*sd, u0, x0, h0, xf);
+    f(i) = rk4(tau0 + s(i)*sd', u0, x0, h0, xf);
     
     if f(i) < f0
 		break
@@ -32,4 +33,4 @@ for i = 2:20
 end
 
 [~,iopt] = min(f);
-xopt = tau0 + s(iopt)*sd;
+xopt = tau0 + s(iopt)*sd';

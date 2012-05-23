@@ -1,6 +1,8 @@
 function [] = plotcharts(t, x, H1, tau, u0, imin)
+global Tk
+tau = [0 tau Tk];
 
-%figure(1),
+figure(1),
 subplot(3,1,1), plot(t, x(:,1), t, x(:,2))
 subplot(3,1,2), plot(t, x(:,3), t, x(:,4))
 subplot(3,1,3), plot(t, H1/max(abs(H1))),

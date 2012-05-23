@@ -1,6 +1,7 @@
 function [Q, t, x, u] = rk4(tau, u0, x0, h0, xf)
+global Tk
 [ur, un] = uranges(tau, h0);
-dTau = diff(tau);
+dTau = diff([0 tau Tk]);
 xlength = ur(end);
 
 x = zeros(xlength, length(x0));
@@ -11,7 +12,7 @@ u = zeros(xlength, 1);
 u(1) = u0;
 cu = u(1);
 
-for j = 1:length(tau)-1
+for j = 1:length(tau)+1
     if un(j) > 0
         h = dTau(j)/un(j);
         for i = ur(j):ur(j+1) - 1

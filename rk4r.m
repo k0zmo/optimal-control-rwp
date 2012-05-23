@@ -1,12 +1,12 @@
 function [psi] = rk4r(tau, x, h0, xf)
 
 psi = zeros(size(x));
-global W
+global W Tk
 psi(end,:) = W * (xf - x(end,:))';
 [ur, un] = uranges(tau, h0);
-dTau = diff(tau);
+dTau = diff([0 tau Tk]);
 
-for j = length(tau)-1:-1:1
+for j = length(tau)+1:-1:1
     if un(j) > 0
         h = dTau(j)/un(j);
         for i = ur(j+1):-1:ur(j)+1

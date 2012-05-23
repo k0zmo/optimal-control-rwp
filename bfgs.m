@@ -27,7 +27,9 @@ itmax = 500;
 
 % Przyblizenie poczatkowe sterowania
 u0 = 1;
-tau = [0 2.5 4.8];
+global Tk
+Tk = 5.1;
+tau = []';
 
 while 1
     
@@ -41,8 +43,8 @@ while 1
     % R = 2 : odnowa (bez przeliczenia gradientu) po zajsciu dQ'*d >= 0
     
     % Czestosc odnowy
-    czod = length(tau(2:end-1));
-    od = 0;
+    czod = length(tau);
+    od = 1;
     for ii = 1:itmax
         if R < 2
             [dQ, Q, x, t, psi, H1, u] = gradient(tau, u0, x0, h0, xf);
@@ -63,13 +65,13 @@ while 1
         
         % Odnowa gradientu
         if R > 0 || od == czod
-            w = eye(length(tau) - 2);
+            w = eye(length(tau));
             d = -dQ;
             disp(strcat('renewal (od=', num2str(od),'/', num2str(czod),')'));
             od = 0;
         else
             r = dQ - gs;
-            s = (tau(2:end-1) - tau_s(2:end-1))';
+            s = (tau - tau_s)';
             
             sr = s' * r;
             vr = w * r;
@@ -105,7 +107,9 @@ while 1
         end
     end
 	
-	disp('after bfgs');
+	disp(' ');
+    tau'
+    disp(' ');
     
     %
     % Generacja szpilkowa
@@ -123,6 +127,7 @@ while 1
     
     if Emin > -1e-6
         disp('switching function synced with control, STOP')
+        [Q, norm(dQ)]
         break
     else
         % Generacja dla chwili poczatkowej - zmiana sterowania poczatkowego
@@ -131,7 +136,7 @@ while 1
             u0 = -u0;
         % Generacja dla chwili koncowej
         elseif imin == length(t)
-            tau = [tau tau(end)];
+            tau = [tau Tk];
         % Generacja "gdzies" w srodku
         else
             tau = [t(imin) t(imin) tau];
@@ -139,8 +144,8 @@ while 1
         end
     end
     
-    plotcharts(t, x, H1, tau, u0, imin);
-    pause(10)
+    %plotcharts(t, x, H1, tau, u0, imin);
+    %pause(10)
 end
 
 plotcharts(t, x, H1, tau, u0);
