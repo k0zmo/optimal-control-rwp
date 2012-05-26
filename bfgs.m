@@ -28,9 +28,11 @@ itmax = 500;
 % Przyblizenie poczatkowe sterowania
 u0 = 1;
 global Tk
-Tk = 5.1;
+Tk = 4.9;
 tau = []';
-
+totalit = 0;
+% [dQ, Q, x, t, psi, H1, u] = gradient(tau, u0, x0, h0, xf);
+% plotcharts(t,x,H1,tau,u0);
 while 1
     
     %
@@ -46,6 +48,7 @@ while 1
     czod = length(tau);
     od = 1;
     for ii = 1:itmax
+        totalit = totalit + 1;
         if R < 2
             [dQ, Q, x, t, psi, H1, u] = gradient(tau, u0, x0, h0, xf);
             disp([Q norm(dQ)])
@@ -73,13 +76,9 @@ while 1
             r = dQ - gs;
             s = (tau - tau_s)';
             
-            sr = s' * r;
-            vr = w * r;
-            vrs = vr * s';
-            
-            % z formuly Shermana-Morrisona w=inv(W), Wd=-gradient(x0)
-            w = w +  (1 + r'*vr)/sr * (s*s')/sr - (vrs+vrs')/sr;
-            d = -w * dQ;
+            ws = w*s;
+            w = w + r*r'/(r'*s) - vs*vs'/(s'*vs);
+            d = -w\dQ;
 
             od = od+1;
         end
@@ -149,3 +148,4 @@ while 1
 end
 
 plotcharts(t, x, H1, tau, u0);
+totalit
