@@ -8,6 +8,9 @@
 \usepackage{subfig}
 \usepackage{graphicx}
 \usepackage{mathpazo}
+%\usepackage{times}
+%\usepackage{lmodern}
+%\usepackage{bera}
 \usepackage[T1]{fontenc}
 \usepackage{color}
 
@@ -411,11 +414,12 @@ Ze zbioru rozwiązań optymalnych dla różnych horyzontów czasowych wybrano te
 \end{figure}
 
 \newpage
+\phantomsection\addcontentsline{toc}{section}{\appendixname\ - Kod źródłowy}
 \section*{\appendixname\ - Kod źródłowy}
 
 \lstset{
-	tabsize=4,
-	basicstyle=\footnotesize,
+	tabsize=2,
+	basicstyle=\small\ttfamily, %\footnotesize
 	numbers=left,
 	numberstyle=\tiny,
 	stepnumber=1, 
@@ -443,8 +447,8 @@ Ze zbioru rozwiązań optymalnych dla różnych horyzontów czasowych wybrano te
 \lstinputlisting[title=\texttt{costfun.m} - funkcjonał jakości]{../costfun.m}
 \lstinputlisting[title=\texttt{divdiff.m} - weryfikacja poprawności obliczania pochodnych]{../divdiff.m}
 \lstinputlisting[title=\texttt{linesearch.m} - poszukiwanie na kierunku]{../linesearch.m}
-\lstinputlisting[title=\texttt{reduction.m} - poszukiwanie na kierunku]{../reduction.m}
-\lstinputlisting[title=\texttt{gradient.m} - pochodna względem czasów przełączeń]{../gradient.m}
+\lstinputlisting[title=\texttt{reduction.m} - redukcja czasów przełączeń]{../reduction.m}
+\lstinputlisting[title=\texttt{gradient.m} - pochodna funkcjonału jakości względem czasów przełączeń]{../gradient.m}
 \lstinputlisting[title=\texttt{rk4.m} - solver dla równań stanu]{../rk4.m}
 \lstinputlisting[title=\texttt{rk4r.m} - solver dla równań sprzężonych]{../rk4r.m}
 \lstinputlisting[title=\texttt{uranges.m} - generuje przedziały sterowania]{../uranges.m}

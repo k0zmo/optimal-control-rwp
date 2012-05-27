@@ -28,9 +28,9 @@ itmax = 500;
 % Przyblizenie poczatkowe sterowania
 u0 = 1;
 global Tk
-Tk = 4.9;
+Tk = 5.05;
 tau = []';
-totalit = 0;
+total_it = 0;
 % [dQ, Q, x, t, psi, H1, u] = gradient(tau, u0, x0, h0, xf);
 % plotcharts(t,x,H1,tau,u0);
 while 1
@@ -48,7 +48,7 @@ while 1
     czod = length(tau);
     od = 1;
     for ii = 1:itmax
-        totalit = totalit + 1;
+        total_it = total_it + 1;
         if R < 2
             [dQ, Q, x, t, psi, H1, u] = gradient(tau, u0, x0, h0, xf);
             disp([Q norm(dQ)])
@@ -77,7 +77,7 @@ while 1
             s = (tau - tau_s)';
             
             ws = w*s;
-            w = w + r*r'/(r'*s) - vs*vs'/(s'*vs);
+            w = w + r*r'/(r'*s) - ws*ws'/(s'*ws);
             d = -w\dQ;
 
             od = od+1;
@@ -126,7 +126,6 @@ while 1
     
     if Emin > -1e-6
         disp('switching function synced with control, STOP')
-        [Q, norm(dQ)]
         break
     else
         % Generacja dla chwili poczatkowej - zmiana sterowania poczatkowego
@@ -148,4 +147,5 @@ while 1
 end
 
 plotcharts(t, x, H1, tau, u0);
-totalit
+Q
+total_it
