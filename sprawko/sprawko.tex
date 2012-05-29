@@ -187,14 +187,14 @@ Do rozwiązania równań systemu zastosowano metodę Rungego-Kutty 4. rzędu z~k
 	\begin{split}
 		x_{i+1} &= x_{i} + \frac{1}{6}\cdot\left(k_{1}+2k_{2}+2k_{3}+k_{4}\right) \\
 		k_{1} &= h\cdot f\left(x_{i},u_{i}\right) \\
-		k_{2} &= h\cdot f\left(x_{i}+\frac{1}{2}h,u_{i}+\frac{1}{2}k_{1}\right) \\
-		k_{3} &= h\cdot f\left(x_{i}+\frac{1}{2}h,u_{i}+\frac{1}{2}k_{2}\right) \\
-		k_{4} &= h\cdot f\left(x_{i}+h,u_{i}+k_{3}\right) \\
+		k_{2} &= h\cdot f\left(x_{i}+\frac{1}{2}k_{1},u_{i}\right) \\
+		k_{3} &= h\cdot f\left(x_{i}+\frac{1}{2}k_{2},u_{i}\right) \\
+		k_{4} &= h\cdot f\left(x_{i}+k_{3},u_{i}\right) \\
 	\end{split}
 \end{equation}
 
 
-gdzie $f\left(x\left(t\right),u\left(t\right)\right)$ to prawa strona równania systemu (\ref{eq-rowstanu1}).
+gdzie $f\left(x\left(t\right),u\left(t\right)\right)$ to prawa strona równania systemu (\ref{eq-rowstanu1}). Warto zaznaczyć, że sterowanie w danym przedziale całkowania jest stałe i dlatego dla każdego $k_{n}$ po prawej stronie równania występuje $u_{i}$.
 
 \section{Zastosowanie zasady maksimum Pontyagrina}
 
@@ -238,7 +238,7 @@ Równania (\ref{eq-rowsprz1}) całkowane są wstecz, zaczynając od chwili końc
 Zgodnie z~teorią Hamiltonian dla trajektorii sprzężonej optymalnej, trajektorii optymalnej oraz~sterowania optymalnego przyjmuje maksymalną wartość w każdej chwili czasu.
 
 \begin{equation}
-	\frac{\partial H}{\partial u} = \Psi^T f^1\left(x\left(t\right),u\left(t\right)\right)=-\Psi_{2}\left(t\right)\frac{k}{J}+\Psi_{4}\left(t\right)\frac{k}{J_{r}}=0
+	H\left(\Psi\left(t\right),x\left(t\right),u\left(t\right)\right)\geq H\left(\Psi\left(t\right),x\left(t\right),v\left(t\right)\right),\ \forall v\in D
 \end{equation}
 
 \section{Postać sterowania}
@@ -314,14 +314,6 @@ gdzie:
 	\end{split}
 \end{equation}
 
-% Wykorzystując wzór Shermana–Morrisona wzór (\ref{eq-bfgs}) można przekształcić do postaci (\ref{eq-sherman}), przez co unikniemy odwracania macierzy.
-
-% \begin{equation}
-	% \label{eq-sherman}
-	% W_{k+1}^{-1}=W_{k}^{-1} + \frac{\left(s^{T}r+r^{T}W_{k}^{-1}r\right)\left(ss^{T}\right)}{\left(s^{T}r\right)^{2}} -
-		% \frac{W_{k}^{-1}rs^{T}+sr^{T}W_{k}^{-1}}{s^{T}r}
-% \end{equation}
-
 Czas przełączenia $\tau_{i}$ przesunięty na kierunku $d_{i}$ o $\alpha$ oznaczymy jako
 \begin{equation}
 	\tau_{i}\left(\alpha\right)=\tau_{i}\left(0\right)+\alpha d_{i}
@@ -335,7 +327,7 @@ Z nierówności $\tau_{i}\leq\tau_{i+1}$ uzyskujemy
 	\alpha_{max} = \min\left\{\frac{\tau_{i+1}\left(0\right)-\tau_{i}\left(0\right)}{d_{i}-d_{i+1}},\ d_{i}-d_{i+1}>0\right\}
 \end{equation}
 
-Wynika z tego, że metoda poszukiwania na kierunku musi zostać zmodyfikowana tak aby uniemożliwić zamianę kolejności czasów przęłączeń a także opuszczenie przez nich przedziału czasu $[0,T]$. W pierwszej kolejności sprawdzana jest wartość $Q_{T}$ dla maksymalnego dopuszczalnego kroku a później, jeśli jest ona gorsza on obecnie najlepszej, wykonywana jest kilkuiteracyjna kontrakcja na półprostej.
+Wynika z tego, że metoda poszukiwania na kierunku musi zostać zmodyfikowana tak, aby uniemożliwić zamianę kolejności czasów przęłączeń a także opuszczenie przez nich przedziału czasu $[0,T]$. W pierwszej kolejności sprawdzana jest wartość $Q_{T}$ dla maksymalnego dopuszczalnego kroku a później, jeśli jest ona gorsza od obecnie najlepszej, wykonywana jest kilkuiteracyjna kontrakcja na półprostej.
 
 Ponadto, po każdej procedurze poszukiwania na kierunku wykonywana jest redukcja czasów przełączeń w sytuacji gdy $\tau_{i}=\tau_{j},i\neq j$ lub gdy $\tau_{i}$ należy do zbioru $\left\{0,T\right\}$. Pomyślne zastosowanie redukcji zmienia strukturę sterowania przez co konieczna jest odnowa macierzy~$W_{k}$.
 
